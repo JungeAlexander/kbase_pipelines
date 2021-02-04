@@ -1,2 +1,6 @@
 project:
-  name: pipelines
+  name: kbase_pipelines
+webserver:
+  port: 8081
+postgres:
+  port: 5435
