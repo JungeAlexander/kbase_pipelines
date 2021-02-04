@@ -6,7 +6,12 @@
 curl -sSL https://install.astronomer.io | sudo bash -s -- v0.23.2
 ```
 
-## Running 
+```
+poetry install --no-root
+poetry run pre-commit install
+```
+
+## Running
 
 ```
 astro dev start
