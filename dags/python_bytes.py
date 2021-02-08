@@ -1,17 +1,61 @@
-# At 17:30 daily
-# (Task 1 - fetch)
-# Fetch RSS feed
-#
-# (Task 2 - filter)
-# Look T (default: one week) back to fetch all episodes
-# Check for all episodes if already in DB based on ID
-# If not in DB, check if transcript is there
-#
-# (Task 3 - store)
-# If transcript there, (parse everything and add to DB
-# Remember set: extra: { 'transcipt_added' : True }
-# Run using backfilling for past dates?
+import json
 
-# Questions
-# Xcom in taskflow -- too much data, e.g. RSS feed
-# HTTPOperator together with TaskFlow? https://airflow.apache.org/docs/apache-airflow-providers-http/stable/_api/airflow/providers/http/operators/http/index.html#airflow.providers.http.operators.http.SimpleHttpOperator
+from airflow.decorators import dag, task
+from airflow.models import Variable
+import pendulum
+
+# These args will get passed on to each operator
+# You can override them on a per-task basis during operator initialization
+default_args = {
+    "owner": "airflow",
+}
+
+
+@dag(
+    default_args=default_args,
+    schedule_interval=Variable.get("daily_update_time"),
+    start_date=pendulum.parse(Variable.get("podcast_start_date")).date(),
+    catchup=True,
+)
+def python_bytes_dag():
+    """
+    ### Python Bytes podcast
+
+    Find, filter and load recent Python Bytes podcast episodes.
+    """
+
+    @task()
+    def get_recent_episodes():
+        """
+        #### Find recent episodes
+        """
+        pass
+
+    @task()
+    def remove_existing_episodes():
+        """
+        #### Remove recent episodes which have already been added to kbase
+        """
+        pass
+
+    @task()
+    def add_transcripts_convert_to_json():
+        """
+        #### Add episode transcript and convert XML to JSON
+        """
+        pass
+
+    @task()
+    def load_episodes():
+        """
+        #### Load episodes into kbase
+        """
+        pass
+
+    recent_episodes = get_recent_episodes()
+    new_episodes = remove_existing_episodes(recent_episodes)
+    new_episodes_with_transcripts = add_transcripts_convert_to_json(new_episodes)
+    load_episodes(new_episodes_with_transcripts)
+
+
+python_bytes_dag()
