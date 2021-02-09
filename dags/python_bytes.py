@@ -13,8 +13,8 @@ default_args = {
 
 @dag(
     default_args=default_args,
-    schedule_interval=Variable.get("daily_update_time"),
-    start_date=pendulum.parse(Variable.get("podcast_start_date")).date(),
+    schedule_interval=Variable.get("update_schedule"),
+    start_date=pendulum.parse(Variable.get("podcast_start_date")),
     catchup=True,
 )
 def python_bytes_dag():
@@ -32,21 +32,22 @@ def python_bytes_dag():
         pass
 
     @task()
-    def remove_existing_episodes():
+    def remove_existing_episodes(recent_episodes):
         """
         #### Remove recent episodes which have already been added to kbase
         """
+        # TODO create airflow (and other users) in DB via script/notebook
         pass
 
     @task()
-    def add_transcripts_convert_to_json():
+    def add_transcripts_convert_to_json(new_episodes):
         """
         #### Add episode transcript and convert XML to JSON
         """
         pass
 
     @task()
-    def load_episodes():
+    def load_episodes(episodes_to_load):
         """
         #### Load episodes into kbase
         """
@@ -58,4 +59,4 @@ def python_bytes_dag():
     load_episodes(new_episodes_with_transcripts)
 
 
-python_bytes_dag()
+d = python_bytes_dag()
