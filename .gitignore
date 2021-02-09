@@ -1,4 +1,5 @@
 .git
 .env
+.vscode
 __pycache__
 airflow_settings.yaml
