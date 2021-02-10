@@ -3,6 +3,7 @@ import json
 
 from airflow.decorators import dag, task
 from airflow.models import Variable
+from airflow.utils.dates import parse_execution_date
 import pendulum
 
 # These args will get passed on to each operator
@@ -29,7 +30,7 @@ def python_bytes_dag():
     """
 
     @task()
-    def get_new_episodes() -> Dict:
+    def get_new_episodes(**kwargs) -> Dict:
         """
         #### Find new episodes and convert them to JSON
 
@@ -37,17 +38,23 @@ def python_bytes_dag():
         XML podcast feeds are converted to JSON
         """
         # TODO create airflow (and other users) in DB via script/notebook
+        new_episodes = {
+            "number": "test",
+            "date": kwargs["execution_date"],
+            "t": "{{ execution_date }}",
+        }
+        print(new_episodes)
 
-        pass
+        return new_episodes
 
     @task()
     def add_transcripts_and_load_episodes(new_episodes: Dict):
         """
         #### Add episode transcript and load episodes into kbase
         """
-        pass
+        print(new_episodes)
 
-    new_episodes = get_new_episodes()
+    new_episodes = get_new_episodes(execution_date="{{ execution_date }}")
     add_transcripts_and_load_episodes(new_episodes)
 
 
