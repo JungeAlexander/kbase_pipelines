@@ -1,3 +1,4 @@
+from typing import Dict
 import json
 
 from airflow.decorators import dag, task
@@ -22,41 +23,32 @@ def python_bytes_dag():
     ### Python Bytes podcast
 
     Find, filter and load recent Python Bytes podcast episodes.
+    To avoid heavy use of XCom between tasks, there are only two tasks:
+    One generating JSON for new episodes to load; one adding episodes transcripts
+    and loading the podcast episodes into kbase.
     """
 
     @task()
-    def get_recent_episodes():
+    def get_new_episodes() -> Dict:
         """
-        #### Find recent episodes
-        """
-        pass
+        #### Find new episodes and convert them to JSON
 
-    @task()
-    def remove_existing_episodes(recent_episodes):
-        """
-        #### Remove recent episodes which have already been added to kbase
+        New episodes are recent episodes that have not been added to kbase yet.
+        XML podcast feeds are converted to JSON
         """
         # TODO create airflow (and other users) in DB via script/notebook
+
         pass
 
     @task()
-    def add_transcripts_convert_to_json(new_episodes):
+    def add_transcripts_and_load_episodes(new_episodes: Dict):
         """
-        #### Add episode transcript and convert XML to JSON
-        """
-        pass
-
-    @task()
-    def load_episodes(episodes_to_load):
-        """
-        #### Load episodes into kbase
+        #### Add episode transcript and load episodes into kbase
         """
         pass
 
-    recent_episodes = get_recent_episodes()
-    new_episodes = remove_existing_episodes(recent_episodes)
-    new_episodes_with_transcripts = add_transcripts_convert_to_json(new_episodes)
-    load_episodes(new_episodes_with_transcripts)
+    new_episodes = get_new_episodes()
+    add_transcripts_and_load_episodes(new_episodes)
 
 
 d = python_bytes_dag()
