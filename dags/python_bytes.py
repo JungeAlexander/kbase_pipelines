@@ -26,7 +26,7 @@ def python_bytes_dag():
     Find, filter and load recent Python Bytes podcast episodes.
     To avoid heavy use of XCom between tasks, there are only two tasks:
     One generating JSON for new episodes to load; one adding episodes transcripts
-    and loading the podcast episodes into kbase.
+    and loading the podcast episodes into kbase!
     """
 
     @task()
