@@ -37,7 +37,6 @@ def python_bytes_dag():
         New episodes are recent episodes that have not been added to kbase yet.
         XML podcast feeds are converted to JSON
         """
-        # TODO create airflow (and other users) in DB via script/notebook
         new_episodes = {
             "number": "test",
             "date": kwargs["execution_date"],
