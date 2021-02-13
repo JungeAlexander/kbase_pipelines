@@ -5,11 +5,22 @@ from airflow.decorators import dag, task
 from airflow.models import Variable
 from airflow.utils.dates import parse_execution_date
 import pendulum
+from pendulum.datetime import DateTime
+
+
+def get_recent_episodes(recent_episodes_date: DateTime) -> Dict:
+    pass
+
+
+def remove_existing_episodes(recent_episodes: Dict) -> Dict:
+    pass
+
 
 # These args will get passed on to each operator
 # You can override them on a per-task basis during operator initialization
 default_args = {
     "owner": "airflow",
+    "retries": 0,
 }
 
 
@@ -37,13 +48,11 @@ def python_bytes_dag():
         New episodes are recent episodes that have not been added to kbase yet.
         XML podcast feeds are converted to JSON
         """
-        new_episodes = {
-            "number": "test",
-            "date": kwargs["execution_date"],
-            "t": "{{ execution_date }}",
-        }
-        print(new_episodes)
-
+        exec_date = parse_execution_date(kwargs["execution_date"])
+        time_frame = pendulum.duration(days=int(Variable.get("podcast_recent_days")))
+        recent_episodes_date = exec_date - time_frame
+        recent_episodes = get_recent_episodes(recent_episodes_date)
+        new_episodes = remove_existing_episodes(recent_episodes)
         return new_episodes
 
     @task()
