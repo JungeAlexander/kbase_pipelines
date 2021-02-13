@@ -1,19 +1,70 @@
+import base64
+import time
 from typing import Dict
 import json
 
 from airflow.decorators import dag, task
-from airflow.models import Variable
+from airflow.models import Connection, Variable
 from airflow.utils.dates import parse_execution_date
+from airflow.utils.session import provide_session
 import pendulum
 from pendulum.datetime import DateTime
+import requests
+
+
+@provide_session
+def get_request_headers(connection_id: str, session=None) -> Dict:
+    connection_query = session.query(Connection).filter(
+        Connection.conn_id == connection_id
+    )
+    connection: Connection = connection_query.one_or_none()
+    login_data = {
+        "username": connection.login,
+        "password": connection.password,
+    }
+    r = requests.post(f"{connection.host}/token", data=login_data)
+    tokens = r.json()
+    a_token = tokens["access_token"]
+    token_headers = {"Authorization": f"Bearer {a_token}"}
+    return token_headers
+
+
+def fetch_transcript(episode_number, number_re, sleep_seconds=3):
+    time.sleep(sleep_seconds)
+    r = requests.get(
+        "https://api.github.com/repos/mikeckennedy/python_bytes_show_notes/git/trees/master"
+    )
+    j = r.json()
+    tree_url = None
+    for e in j["tree"]:
+        if e["path"] == "transcripts":
+            tree_url = e["url"]
+    assert tree_url is not None
+
+    r = requests.get(tree_url)
+    j = r.json()
+
+    blob_url = None
+    for e in j["tree"]:
+        m = number_re.match(e["path"])
+        if m and m.group(0) == f"{episode_number:03}":
+            blob_url = e["url"]
+    assert blob_url is not None
+
+    r = requests.get(blob_url)
+    j = r.json()
+    content = base64.b64decode(j["content"]).decode("utf-8")
+    return content
 
 
 def get_recent_episodes(recent_episodes_date: DateTime) -> Dict:
-    pass
+    token_headers = get_request_headers("dbapi")
+    return {}
 
 
 def remove_existing_episodes(recent_episodes: Dict) -> Dict:
-    pass
+    token_headers = get_request_headers("dbapi")
+    return {}
 
 
 # These args will get passed on to each operator
