@@ -107,14 +107,14 @@ def python_bytes_dag():
         return new_episodes
 
     @task()
-    def add_transcripts_and_load_episodes(new_episodes: Dict):
+    def load_episodes(new_episodes: Dict):
         """
-        #### Add episode transcript and load episodes into kbase
+        #### Load episodes into kbase
         """
         print(new_episodes)
 
     new_episodes = get_new_episodes(execution_date="{{ execution_date }}")
-    add_transcripts_and_load_episodes(new_episodes)
+    load_episodes(new_episodes)
 
 
 d = python_bytes_dag()
