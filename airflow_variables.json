@@ -1,4 +1,5 @@
 {
+    "api_connection_id": "dbapi",
     "podcast_recent_days": 7,
     "podcast_start_date": 20210201,
     "update_schedule": "30 17 * * *"
