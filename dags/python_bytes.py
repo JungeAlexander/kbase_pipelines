@@ -231,7 +231,14 @@ def python_bytes_dag():
         api_connection_id = Variable.get("api_connection_id")
         connection = get_connection(api_connection_id)
         token_headers = get_request_headers(connection)
-        print(new_episodes)
+        for episode in new_episodes:
+            id_ = episode["id"]
+            r = requests.post(
+                f"{connection.host}/documents/", json=episode, headers=token_headers
+            )
+            if r.status_code != 200:
+                print(f"Failed: {id_}")
+                continue
 
     new_episodes = get_new_episodes(execution_date="{{ execution_date }}")
     load_episodes(new_episodes)
