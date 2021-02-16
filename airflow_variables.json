@@ -1,6 +1,8 @@
 {
     "api_connection_id": "dbapi",
-    "podcast_recent_days": 7,
-    "podcast_start_date": 20210201,
+    "github_token": "1234567890123456789012345678901234567890",
+    "github_user": "JungeAlexander",
+    "podcast_recent_days": 20,
+    "podcast_start_date": 20210210,
     "update_schedule": "30 17 * * 6"
 }
