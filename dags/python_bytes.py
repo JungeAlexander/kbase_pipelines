@@ -37,10 +37,12 @@ def get_request_headers(connection: Connection) -> Dict:
     return token_headers
 
 
-def fetch_transcript(episode_number, number_re, sleep_seconds=3):
+def fetch_transcript(episode_number, number_re, sleep_seconds=1):
+    github_auth = (Variable.get("github_user"), Variable.get("github_token"))
     time.sleep(sleep_seconds)
     r = requests.get(
-        "https://api.github.com/repos/mikeckennedy/python_bytes_show_notes/git/trees/master"
+        "https://api.github.com/repos/mikeckennedy/python_bytes_show_notes/git/trees/master",
+        auth=github_auth,
     )
     j = r.json()
     tree_url = None
@@ -49,7 +51,7 @@ def fetch_transcript(episode_number, number_re, sleep_seconds=3):
             tree_url = e["url"]
     assert tree_url is not None
 
-    r = requests.get(tree_url)
+    r = requests.get(tree_url, auth=github_auth)
     j = r.json()
 
     blob_url = None
@@ -59,7 +61,7 @@ def fetch_transcript(episode_number, number_re, sleep_seconds=3):
             blob_url = e["url"]
     assert blob_url is not None
 
-    r = requests.get(blob_url)
+    r = requests.get(blob_url, auth=github_auth)
     j = r.json()
     content = base64.b64decode(j["content"]).decode("utf-8")
     return content
