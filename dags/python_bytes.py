@@ -37,11 +37,11 @@ def get_request_headers(connection: Connection) -> Dict:
     return token_headers
 
 
-def fetch_transcript(episode_number, number_re, sleep_seconds=1):
+def fetch_transcript(episode_number, number_re, repo_api_url, sleep_seconds=1):
     github_auth = (Variable.get("github_user"), Variable.get("github_token"))
     time.sleep(sleep_seconds)
     r = requests.get(
-        "https://api.github.com/repos/mikeckennedy/python_bytes_show_notes/git/trees/master",
+        repo_api_url,
         auth=github_auth,
     )
     j = r.json()
@@ -126,7 +126,8 @@ def get_recent_episodes(recent_episodes_date: DateTime) -> List[Dict]:
             break
 
         # append transcript to both parsed and raw text
-        transcript = fetch_transcript(episode_number, number_re)
+        repo_api_url = "https://api.github.com/repos/mikeckennedy/python_bytes_show_notes/git/trees/master"
+        transcript = fetch_transcript(episode_number, number_re, repo_api_url)
         assert transcript
         transcript = "\nEpisode transcript:\n" + transcript
         raw_text += transcript
