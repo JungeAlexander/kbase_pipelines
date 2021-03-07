@@ -67,7 +67,9 @@ def fetch_transcript(episode_number, number_re, repo_api_url, sleep_seconds=1):
     return content
 
 
-def get_recent_episodes(recent_episodes_date: DateTime) -> List[Dict]:
+def get_recent_episodes(
+    recent_episodes_date: DateTime, exec_date: DateTime
+) -> List[Dict]:
     number_re = re.compile("^\d+")
 
     tree = etree.parse(
@@ -141,7 +143,7 @@ def get_recent_episodes(recent_episodes_date: DateTime) -> List[Dict]:
             "document_type": "Podcast episode",
             "authors": [author],
             "publication_date": publication_date,
-            "update_date": "2020-12-05",
+            "update_date": exec_date.to_date_string(),
             "urls": [url],
             "summary": title,
             "raw_text": raw_text,
@@ -213,7 +215,7 @@ def python_bytes_dag():
         api_connection_id = Variable.get("api_connection_id")
         connection = get_connection(api_connection_id)
         token_headers = get_request_headers(connection)
-        recent_episodes = get_recent_episodes(recent_episodes_date)
+        recent_episodes = get_recent_episodes(recent_episodes_date, exec_date)
 
         new_episodes = remove_existing_episodes(
             recent_episodes, connection, token_headers
