@@ -44,9 +44,11 @@ def get_recent_episodes(
 
         title = tag_to_text["{http://www.itunes.com/dtds/podcast-1.0.dtd}title"].strip()
         assert len(title) > 0
-        summary = tag_to_text[
-            "{http://www.itunes.com/dtds/podcast-1.0.dtd}summary"
-        ].strip()
+        summary = tag_to_text["{http://www.itunes.com/dtds/podcast-1.0.dtd}summary"]
+        if summary is None:
+            summary = title
+        else:
+            summary = summary.strip()
         author = tag_to_text[
             "{http://www.itunes.com/dtds/podcast-1.0.dtd}author"
         ].strip()
