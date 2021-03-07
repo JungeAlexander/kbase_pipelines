@@ -91,7 +91,9 @@ def get_recent_episodes(
         transcript = python_bytes.fetch_transcript(
             episode_number, number_re, repo_api_url
         )
-        assert transcript
+        # Skip episode for now as we only want episodes with transcripts
+        if transcript is None:
+            continue
         transcript = "\nEpisode transcript:\n" + transcript
         raw_text += transcript
         parsed_text += transcript

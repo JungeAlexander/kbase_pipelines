@@ -59,7 +59,8 @@ def fetch_transcript(episode_number, number_re, repo_api_url, sleep_seconds=1):
         m = number_re.match(e["path"])
         if m and m.group(0) == f"{episode_number:03}":
             blob_url = e["url"]
-    assert blob_url is not None
+    if blob_url is None:
+        return None
 
     r = requests.get(blob_url, auth=github_auth)
     j = r.json()
@@ -130,7 +131,9 @@ def get_recent_episodes(
         # append transcript to both parsed and raw text
         repo_api_url = "https://api.github.com/repos/mikeckennedy/python_bytes_show_notes/git/trees/master"
         transcript = fetch_transcript(episode_number, number_re, repo_api_url)
-        assert transcript
+        # Skip episode for now as we only want episodes with transcripts
+        if transcript is None:
+            continue
         transcript = "\nEpisode transcript:\n" + transcript
         raw_text += transcript
         parsed_text += transcript
