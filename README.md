@@ -17,6 +17,13 @@ poetry run pre-commit install
 astro dev start
 ```
 
+If this should not work, try:
+
+```
+DOCKER_BUILDKIT=0 astro dev start
+```
+
+
 ```
 astro dev stop
 ```
